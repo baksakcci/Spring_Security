@@ -1,3 +1,7 @@
+logging:
+  level:
+    '[com.example.springsecurityproject]': DEBUG
+
 server:
   port: 8080
   servlet:
@@ -8,6 +12,10 @@ server:
       force: true
 
 spring:
+  output:
+    ansi:
+      enabled: always
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/security?serverTimezone=Asia/Seoul
@@ -32,8 +40,8 @@ spring:
       client:
         registration:
           google: # /oauth2/authorization/google ? ??? ???? ??.
-            client-id: ???
-            client-secret: ???
+            client-id: 12807852917-qp8bfjn19r4v3btor9qobrka6inbplus.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - email
               - profile
