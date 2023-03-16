@@ -21,6 +21,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    // security session(내부 Authentication)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // form의 username이 여기에 인자로 오게되는거임

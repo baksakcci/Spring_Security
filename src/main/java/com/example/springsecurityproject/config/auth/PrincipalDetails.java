@@ -2,11 +2,13 @@ package com.example.springsecurityproject.config.auth;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.springsecurityproject.model.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 // 시큐리티가 /login을 낚아채서 로그인을 진행
 // 로그인 진행이 완료되면 session을 만들어줌
@@ -17,12 +19,19 @@ import com.example.springsecurityproject.model.User;
 
 // Security Session (Security ContextHolder) -> Authentication(인증) -> UserDetails(PrincipalDetails) -> User!
 
-public class PrincipalDetails implements UserDetails{
+public class PrincipalDetails implements UserDetails, OAuth2User {
     // composition
     private User user;
 
+    private Map<String, Object> attributes;
+
     public PrincipalDetails(User user) {
+        this.user = user; // 밖에서 User를 만들어서 주입할 예정
+    }
+
+    public PrincipalDetails(User user, Map<String, Object> attributes) {
         this.user = user;
+        this.attributes = attributes;
     }
 
     // 해당 User의 권한을 리턴하는 곳
@@ -73,5 +82,17 @@ public class PrincipalDetails implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
-    
+
+    /*
+    oauth2user method override
+     */
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }
