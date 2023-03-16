@@ -1,8 +1,14 @@
 package com.example.springsecurityproject.controller;
 
+import com.example.springsecurityproject.config.auth.PrincipalDetails;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,13 +26,33 @@ public class indexController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @GetMapping("/test/login")
+    public @ResponseBody String testLogin(Authentication authentication, @AuthenticationPrincipal UserDetails userDetails) {
+        System.out.println("/test/login =================");
+        System.out.println("userDetails : " + userDetails.getUsername());
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+        System.out.println("authentication : " + principal.getUsername());
+        return "세션 정보 확인하기";
+    }
+
+    @GetMapping("/test/oauth/login")
+    public @ResponseBody String testOAuthLogin(Authentication authentication, @AuthenticationPrincipal OAuth2User oauth) {
+        System.out.println("/test/login =================");
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        // 두 정보 다 똑같은것임. authentication interface로도, @AuthenticationPrincipal로도 가져올 수 있다.
+        System.out.println("authentication : " + oAuth2User.getAttributes());
+        System.out.println("oauth2User : " + oauth.getAttributes());
+        return "세션 정보 확인하기";
+    }
+
     @GetMapping("")
     public String index() {
         return "index"; // index라는 View를 반환
     }
 
     @GetMapping("/user")
-    public @ResponseBody String user() {
+    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        System.out.println("principalDetails : " + principalDetails.getUsername());
         return "user";
     }
 

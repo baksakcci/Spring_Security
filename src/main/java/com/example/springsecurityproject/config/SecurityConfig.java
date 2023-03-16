@@ -14,9 +14,9 @@ import com.example.springsecurityproject.config.oauth.PrincipalOauth2UserService
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secure 어노테이션 활성화, preAuthorize,
-@RequiredArgsConstructor // postAuthorize 어노테이션 활성화
+@EnableWebSecurity(debug = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secure 어노테이션 활성화, preAuthorize,postAuthorize 어노테이션 활성화
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalOauth2UserService principalOauth2UserService;
@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/login") // localhost:8080/login이 호출되면 security가 낚아채서 대신 로그인 진행
                 // html 파일과 함께 보면 흐름 이해 가능. login 버튼을 누르는 것이라 할 수 있다.
                 .defaultSuccessUrl("/") // defaulturl로 갈 수 있게 함. 만약 /user로 가서 로그인 하면 /user 그대로 다시 보여줌
-                .and()
+                .and()// 여기서부터 oauth2 추가 부분
                 .oauth2Login()
                 .loginPage("/loginForm")
                 .userInfoEndpoint()
