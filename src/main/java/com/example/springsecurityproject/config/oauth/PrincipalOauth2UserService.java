@@ -32,17 +32,33 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         System.out.println(userRequest.getAccessToken().getTokenValue()); // access token 값
         // userRequest정보 -> loadUser함수를 통해 구글로부터 회원 프로필을 받을 수 있다.(.getAttributes())
         System.out.println(super.loadUser(userRequest).getAttributes()); // userRequest 데이터 출력
-        // 강제 회원가입 진행
+
+        /*
+         강제 회원가입 진행
+         */
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        String client = userRequest.getClientRegistration().getClientName();
-        String clientId = oAuth2User.getAttribute("sub");
-        String username = client + "_" + clientId; // google_1912394576278..
-        String email = oAuth2User.getAttribute("email");
+        OAuth2UserInfo oAuth2UserInfo = null;
+        if(userRequest.getClientRegistration().getRegistrationId().equals("google")) {
+            oAuth2UserInfo = new GoogleOAuth2UserInfo(oAuth2User.getAttributes());
+        } else if(userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
+            oAuth2UserInfo = new FacebookOAuth2UserInfo(oAuth2User.getAttributes());
+        } else {
+            System.out.println("구글과 페이스북 이외에 지원하지 않습니다.");
+        }
+
+        // userRequest.getClientRegistration().getClientName(); ->
+        String provider = oAuth2UserInfo.getProvider();
+        // oAuth2User.getAttribute("sub"); ->
+        String providerId = oAuth2UserInfo.getProviderId(); // google, facebook마다 제공하는 양식이 다름
+        // provider + "_" + providerId; google_1912394576278..->
+        String username = oAuth2UserInfo.getName();
+        // oAuth2User.getAttribute("email"); ->
+        String email = oAuth2UserInfo.getEmail();
         String role = "ROLE_USER";
 
-        User userEntity = userRepository.findByUsername(username);
+        User userEntity = userRepository.findByUsername(username); // select문으로 확인
         if(userEntity == null) {
-            userEntity = new User(username, "opar13!", email, role, client, clientId);
+            userEntity = new User(username, "opar13!", email, role, provider, providerId);
             userRepository.save(userEntity);
         }
         return new PrincipalDetails(userEntity, oAuth2User.getAttributes());

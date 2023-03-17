@@ -27,6 +27,7 @@ public class PrincipalDetailsService implements UserDetailsService {
         // form의 username이 여기에 인자로 오게되는거임
         User userEntity = userRepository.findByUsername(username);
         if(userEntity != null) {
+            userEntity.setProvider("inner_server");
             return new PrincipalDetails(userEntity);
         }
         return null;

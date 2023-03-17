@@ -34,3 +34,6 @@ implementation 'org.springframework.boot:spring-boot-starter-security'
 implementation 'org.springframework.boot:spring-boot-starter-web'
 implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client'
 ```
+---
+# API Test
+- [Facebook - 그래프 API 탐색기](https://developers.facebook.com/tools/explorer)
